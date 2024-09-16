@@ -4,37 +4,40 @@
   <!-- end Header -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Loop through products -->
-    <div *ngFor="let product of products" class="flex h-[420px] flex-col rounded-lg bg-background p-8 shadow-lg">
-      <!-- Product Image -->
-      <div [ngStyle]="{ 'background-image': 'url(' + product.imageUrl + ')' }"
-        class="h-[240px] cursor-pointer rounded-md bg-cover transition duration-150 ease-in-out hover:opacity-75"
-        [style.background-image]="'url(' + (product.imageUrl || './assets/images/default-product.jpg') + ')'">
-      </div>
-  
-      <!-- Product Title -->
-      <h2 class="text-md mt-6 font-semibold text-foreground">{{ product.name }}</h2>
-  
-      <!-- Product Price and Last Bid Info -->
-      <div class="flex items-end justify-between text-sm font-semibold text-muted-foreground mt-2">
-        <span>Price: {{ product.price | currency }}</span>
-        <span>Company: {{ product.company.name }}</span>
-      </div>
-  
-      <!-- Product Description -->
-      <p class="text-sm mt-4 text-muted-foreground">{{ product.description }}</p>
-  
-      <!-- Action Buttons -->
-      <div class="mt-6 flex items-center justify-between">
-        <button
-          class="hover:bg-primary-600 flex-none rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground">
-          Place a Bid
-        </button>
-        <button
-          class="flex-none rounded-md bg-card px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground">
-          View Item
-        </button>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div *ngFor="let product of products" class="flex h-[420px] flex-col rounded-lg bg-background p-8 shadow-lg">
+    <!-- Product Image -->
+    <div [ngStyle]="{ 'background-image': 'url(' + product.imageUrl + ')' }"
+      class="h-[240px] cursor-pointer rounded-md bg-cover transition duration-150 ease-in-out hover:opacity-75"
+      [style.background-image]="'url(' + (product.imageUrl || './assets/images/default-product.jpg') + ')'">
     </div>
+
+    <!-- Product Title -->
+    <h2 class="text-md mt-6 font-semibold text-foreground">{{ product.name }}</h2>
+
+    <!-- Product Price and Company -->
+    <div class="flex items-end justify-between text-sm font-semibold text-muted-foreground mt-2">
+      <span>Price: {{ product.price | currency }}</span>
+      <span>Company: {{ product.company.name }}</span>
+    </div>
+
+    <!-- Product Description -->
+    <p class="text-sm mt-4 text-muted-foreground">{{ product.description }}</p>
+
+    <!-- Action Buttons -->
+    <div class="mt-6 flex items-center justify-between">
+      <button (click)="buyNow(product)"
+        class="hover:bg-primary-600 flex-none rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground">
+        Buy Now
+      </button>
+      <button (click)="toggleSelection(product)"
+        class="flex-none rounded-md bg-card px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground">
+        {{ selectedProducts.includes(product) ? 'Remover' : 'Carrinho' }}
+      </button>
+    </div>
+  </div>
+</div>
+
   </div>
 
   <!-- <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4"> -->
