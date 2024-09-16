@@ -1,0 +1,15 @@
+{
+  "modules": {
+    "auth": {
+      "title-banner": "Rápido, eficiente e produtivo",
+      "description-banner": "A transformação financeira-digital da sua empresa começa por aquil.",
+      "pages": {
+        "sign-up": {
+          "title-sign-up":"Criar conta",
+          "description-sign-up": "Vamos começar com o seu teste gratuito de 30 dias"
+        }
+      }
+    }
+  }
+}
+

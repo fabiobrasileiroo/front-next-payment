@@ -1,0 +1,14 @@
+{
+  "modules": {
+    "auth": {
+      "title-banner": "Fast, Efficient and Productive",
+      "description-banner": "Your company's financial-digital transformation starts here.",
+      "pages": {
+       "sign-up": {
+         "title-sign-up":"Sign Up ",
+         "description-sign-up": "Let's get started with your 30 day free trial"
+       }
+     }
+    }
+  }
+}
