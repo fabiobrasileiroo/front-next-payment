@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PaymentService {
-  private apiUrl = 'https://back-next-payment.onrender.com/api/payments';
+  private apiUrl = 'http://localhost:3000/api/payments';
 
   constructor(private http: HttpClient) {}
 
