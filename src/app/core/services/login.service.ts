@@ -7,12 +7,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class LoginService {
-  private readonly API_URL = 'https://back-next-payment.onrender.com/api/login';
+  private readonly API_URL = 'https://back-next-payment.onrender.com/auth/login';
   
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
+    console.log("🚀 ~ LoginService ~ login ~ email:", email)
+    console.log("🚀 ~ LoginService ~ login ~ password:", password)
+
     return this.http.post(this.API_URL, { email, password });
   }
 
