@@ -25,7 +25,7 @@
 
     <ul class="my-2 mx-4 flex flex-col">
       @for (item of profileMenu; track $index) {
-      <li routerLink="{{ item.link }}" :key="$index"
+      <li routerLink="{{ item.link }}"(click)="onMenuClick(item.title)"  :key="$index"
         class="inline-flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-card hover:text-primary">
         <svg-icon src="{{ item.icon }}" [svgClass]="'h-5 w-5 text-muted-foreground/50'"> </svg-icon>
         {{ item.title }}
@@ -58,7 +58,7 @@
 
         <button class="dark:bg-slate-300 rounded" (click)="setLanguage('en')">English</button>
         <button class="dark:bg-slate-300 rounded" (click)="setLanguage('pt-BR')">Português (BR)</button>
-        @for (item of themeColors; track $index) {
+        <!-- @for (item of themeColors; track $index) {
         <div
           :key="$index"
           (click)="toggleThemeColor(item.name)"
@@ -69,7 +69,7 @@
             class="mr-1 flex h-5 w-5 shrink-0 -translate-x-1 items-center justify-center rounded-full bg-rose-500"></span>
           <p class="capitalize">{{ item.name }}</p>
         </div>
-        }
+        } -->
       </div>
     </div>
     <div class="mx-4 my-2">

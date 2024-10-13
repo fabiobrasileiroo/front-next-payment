@@ -1,35 +1,41 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { NgClass, NgIf } from '@angular/common';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { LoginService } from 'src/app/core/services/login.service';
-import { HttpClientModule } from '@angular/common/http';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, NgClass, NgIf, ButtonComponent,HttpClientModule],
+  imports: [RouterLink,NgClass, NgIf, ReactiveFormsModule, FormsModule, ButtonComponent,AngularSvgIconModule],
 })
 export class SignInComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
-  passwordTextType!: boolean;
+  passwordTextType = false;
+  loading = false;
+  loginError = false;
 
-  constructor(private readonly _formBuilder: FormBuilder, private readonly _router: Router,private LoginService: LoginService) {}
+  @ViewChild('passwordInput', { static: false }) passwordInput!: ElementRef;
+  relebrar!: string | null;
 
-  onClick() {
-    console.log('Button clicked');
-  }
+  constructor(
+    private readonly _formBuilder: FormBuilder,
+    private readonly _router: Router,
+    private loginService: LoginService
+  ) {}
 
   ngOnInit(): void {
-    this.form = this._formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
+     const savedEmail = localStorage.getItem('email');  // Retrieve the stored email if it exists
+  this.form = this._formBuilder.group({
+    email: [savedEmail !== null ? savedEmail : '', [Validators.required, Validators.email]],  // Conditionally set email value
+    password: ['', Validators.required],
+    rememberMe: [false],
+  });
   }
 
   get f() {
@@ -40,27 +46,48 @@ export class SignInComponent implements OnInit {
     this.passwordTextType = !this.passwordTextType;
   }
 
+  focusNextInput(event: any, nextInputId?: string): void {
+    if (event.key === 'Enter') {
+      if (nextInputId) {
+        const nextInput = document.getElementById(nextInputId);
+        nextInput?.focus();
+      } else {
+        this.onSubmit(); // Submit form on last input (password field)
+      }
+    }
+  }
+
   onSubmit() {
     this.submitted = true;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { email, password } = this.form.value;
+    this.loginError = false;
 
-    // stop here if form is invalid
+    const { email, password, rememberMe } = this.form.value;
+
     if (this.form.invalid) {
       return;
     }
-     this.LoginService.login(email, password).subscribe({
+
+    this.loading = true;
+
+    this.loginService.login(email, password).subscribe({
       next: (response) => {
-        const token = response.token; // Supondo que o token está no campo `token` da resposta
-        this.LoginService.saveToken(token); // Armazenar o token
-        console.log("🚀 ~ SignInComponent ~ this.LoginService.login ~ token:", token)
-        this._router.navigate(['/']); // Navegar para o dashboard
+        const token = response.token;
+        this.loginService.saveToken(token);
+
+        if (rememberMe) {
+          localStorage.setItem('email', email);
+          // localStorage.setItem('password', password); // In production, avoid storing sensitive info like this.
+        }
+
+        this._router.navigate(['/']);
+        this.loading = false;
       },
       error: (err) => {
+        
+        this.loginError = true;
+        this.loading = false;
         console.error('Login failed', err);
       },
     });
-
-    // this._router.navigate(['/']);
   }
 }

@@ -22,7 +22,7 @@
     "ng": "ng",
     "dev": "ng serve --open",
     "start": "ng serve --open --host 0.0.0.0",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "e2e-ui": "npx playwright test --ui",

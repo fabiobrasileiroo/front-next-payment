@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { LanguageService } from 'src/app/core/services/language.service';
+import { LoginService } from 'src/app/core/services/login.service';
 
 @Component({
   selector: 'app-profile-menu',
@@ -52,7 +53,7 @@ export class ProfileMenuComponent implements OnInit {
     {
       title: 'Log out',
       icon: './assets/icons/heroicons/outline/logout.svg',
-      link: '/auth',
+      // link: '/auth',
     },
   ];
 
@@ -89,15 +90,15 @@ export class ProfileMenuComponent implements OnInit {
   ];
 
   public themeMode = ['light', 'dark'];
-  public currentLanguage!: string;// localStorage.getItem("language")
+  public currentLanguage!: string; // localStorage.getItem("language")
 
-  constructor(public themeService: ThemeService, private languageService: LanguageService) {}
+  constructor(public themeService: ThemeService, private languageService: LanguageService, private router: Router,private loginService: LoginService) {}
 
   ngOnInit(): void {}
 
-   setLanguage(language: string) {
+  setLanguage(language: string) {
     this.languageService.changeLanguage(language);
-     this.currentLanguage = language
+    this.currentLanguage = language;
   }
   public toggleMenu(): void {
     this.isOpen = !this.isOpen;
@@ -114,5 +115,21 @@ export class ProfileMenuComponent implements OnInit {
     this.themeService.theme.update((theme) => {
       return { ...theme, color: color };
     });
+  }
+  // Método para lidar com logout
+  onLogout(): void {
+    // LoginService.logout(); // Remove o token do localStorage
+    this.loginService.logout();
+    localStorage.removeItem('token'); 
+     console.log('Token removed:', localStorage.getItem('token'));
+    this.router.navigate(['/auth/sign-in']); // Redirecionar para a tela de login
+  }
+
+  // Verifica se o item do menu é logout e chama o método adequado
+  onMenuClick(action: string): void {
+    console.log(' chamou', action)
+    if (action === 'Log out') {
+      this.onLogout();
+    }
   }
 }
