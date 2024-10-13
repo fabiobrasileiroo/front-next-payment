@@ -27,6 +27,7 @@ export class ButtonComponent implements OnInit {
     transform: (value: boolean | string) => (typeof value === 'string' ? value === '' : value),
   });
   @Input() loading: boolean = false;  // Novo input para controlar o estado de carregamento
+  @Input() disabled: boolean = false;  // Novo input para controlar o estado de carregamento
   @Output() buttonClick = new EventEmitter<void>();
 
   public classes: string = '';
@@ -102,7 +103,7 @@ export class ButtonComponent implements OnInit {
   }
 
   onButtonClick() {
-    if(!this.loading) {
+    if (!this.loading && !this.disabled) {
       this.buttonClick.emit();
     }
   }
