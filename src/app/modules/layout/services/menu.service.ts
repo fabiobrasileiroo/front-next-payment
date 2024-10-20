@@ -12,14 +12,29 @@ export class MenuService implements OnDestroy {
   private _showMobileMenu = signal(false);
   private _pagesMenu = signal<MenuItem[]>([]);
   private _subscription = new Subscription();
+  savedMenu: MenuItem[];
 
-  constructor(private router: Router) {
-    /** Set dynamic menu */
-    this._pagesMenu.set(Menu.pages);
+    constructor(private router: Router) {
+    // Debug: Check what is in localStorage for 'menu'
+       const savedMenuJson = localStorage.getItem('menu');
+    this.savedMenu = savedMenuJson ? JSON.parse(savedMenuJson) : [];
+    // this.savedMenu = Menu.getMenu();
+    console.log("🚀 ~ MenuService ~ constructor ~ savedMenu:", this.savedMenu);
 
+    /** Initialize the menu */
+    if (this.savedMenu && this.savedMenu.length > 0) {
+      this._pagesMenu.set(this.savedMenu); // Set menu from localStorage if available
+      console.log("🚀 ~ MenuService ~ constructor ~ Menu loaded from local storage.");
+    } else {
+      this._pagesMenu.set(Menu.pages); // Fallback to default static menu
+      console.log("🚀 ~ MenuService ~ constructor ~ Default menu loaded.");
+      console.log("🚀 ~ MenuService ~ constructor ~ _pagesMenu:", this._pagesMenu)
+    }
+
+    // Subscribe to router events to update the menu based on navigation
     const sub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        /** Expand menu base on active route */
+        /** Expand menu based on active route */
         this._pagesMenu().forEach((menu) => {
           let activeGroup = false;
           menu.items.forEach((subMenu) => {
@@ -37,6 +52,9 @@ export class MenuService implements OnDestroy {
     });
     this._subscription.add(sub);
   }
+
+  // Other methods remain unchanged...
+
 
   get showSideBar() {
     return this._showSidebar();
@@ -66,6 +84,11 @@ export class MenuService implements OnDestroy {
 
   public toggleSubMenu(submenu: SubMenuItem) {
     submenu.expanded = !submenu.expanded;
+  }
+
+  public setMenu(menu: MenuItem[]) {
+    this._pagesMenu.set(menu);
+    Menu.setMenu(menu); // Update the static Menu class
   }
 
   private expand(items: Array<any>) {

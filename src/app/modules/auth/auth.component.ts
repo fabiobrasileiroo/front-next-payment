@@ -1,34 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ApiService } from 'src/app/core/services/api.service';
-import { lastValueFrom } from 'rxjs';
+import { NgIf, NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
   standalone: true,
-  imports: [AngularSvgIconModule, RouterOutlet, TranslateModule],
+  imports: [AngularSvgIconModule, RouterOutlet, TranslateModule, NgStyle, NgIf],
 })
 export class AuthComponent implements OnInit {
-  constructor(private translateService: TranslateService, private apiService: ApiService ) {}
-  
-   public changeLanguage(language: string): void {
+  isSmallScreen: boolean = false;
 
+  constructor(private translateService: TranslateService, private apiService: ApiService) {
+    this.checkScreenSize();
+  }
+
+  public changeLanguage(language: string): void {
     this.translateService.use(language);
   }
+
   async ngOnInit(): Promise<void> {
-    try {
-      const ipInfo = await lastValueFrom(this.apiService.getIPInfo());
-      console.log('IP Info:', ipInfo);
-      // Aqui você pode fazer algo com os dados
-    } catch (error) {
-      console.error('Error fetching IP info:', error);
-    }
+    // Código original comentado para referência futura
+    // try {
+    //   const ipInfo = await lastValueFrom(this.apiService.getIPInfo());
+    //   console.log('IP Info:', ipInfo);
+    // } catch (error) {
+    //   console.error('Error fetching IP info:', error);
+    // }
   }
-    //  const ipInfo$ = this.apiService.getIPInfo();
-    //  console.log("🚀 ~ AuthComponent ~ ngOnInit ~ ipInfo$:", ipInfo$)
-    // const ipInfo = await lastValueFrom(ipInfo$)
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isSmallScreen = window.innerWidth < 1024; // Largura para lg do Tailwind
+  }
 }

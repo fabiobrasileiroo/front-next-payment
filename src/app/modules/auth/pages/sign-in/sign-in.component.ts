@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { LoginService } from 'src/app/core/services/login.service';
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { MenuService } from 'src/app/modules/layout/services/menu.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -26,7 +27,8 @@ export class SignInComponent implements OnInit {
   constructor(
     private readonly _formBuilder: FormBuilder,
     private readonly _router: Router,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private menuService: MenuService
   ) {}
 
   ngOnInit(): void {
@@ -71,8 +73,15 @@ export class SignInComponent implements OnInit {
 
     this.loginService.login(email, password).subscribe({
       next: (response) => {
+        const menu = response.menu; // Get the menu from the response
+        console.log("🚀 ~ SignInComponent ~ this.loginService.login ~ response:", response)
         const token = response.token;
         this.loginService.saveToken(token);
+
+        // Save menu data to localStorage or a service
+        localStorage.setItem('menu', JSON.stringify(menu));
+              // Update the menu dynamically using MenuService
+        this.menuService.setMenu(menu); // Set the menu in the service
 
         if (rememberMe) {
           localStorage.setItem('email', email);
