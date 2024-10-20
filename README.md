@@ -58,7 +58,7 @@ Para configurar o ambiente de desenvolvimento e executar o projeto, siga os pass
 
 3. **Gerar uma build de produção:**
    ```bash
-   ng build --prod
+   npx ng build
    ```
 
 
