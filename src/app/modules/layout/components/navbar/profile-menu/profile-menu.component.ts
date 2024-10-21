@@ -91,10 +91,22 @@ export class ProfileMenuComponent implements OnInit {
 
   public themeMode = ['light', 'dark'];
   public currentLanguage!: string; // localStorage.getItem("language")
+  name: string | null = 'Sem nome';
+  email: string | null = 'Sem email';
+  imageUrl: string | null = 'Sem email';
 
-  constructor(public themeService: ThemeService, private languageService: LanguageService, private router: Router,private loginService: LoginService) {}
+  constructor(
+    public themeService: ThemeService,
+    private languageService: LanguageService,
+    private router: Router,
+    private loginService: LoginService,
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.name = localStorage.getItem('name');
+    this.email = localStorage.getItem('email');
+    this.imageUrl = localStorage.getItem('imageUrl');
+  }
 
   setLanguage(language: string) {
     this.languageService.changeLanguage(language);
@@ -120,14 +132,14 @@ export class ProfileMenuComponent implements OnInit {
   onLogout(): void {
     // LoginService.logout(); // Remove o token do localStorage
     this.loginService.logout();
-    localStorage.removeItem('token'); 
-     console.log('Token removed:', localStorage.getItem('token'));
+    localStorage.removeItem('token');
+    console.log('Token removed:', localStorage.getItem('token'));
     this.router.navigate(['/auth/sign-in']); // Redirecionar para a tela de login
   }
 
   // Verifica se o item do menu é logout e chama o método adequado
   onMenuClick(action: string): void {
-    console.log(' chamou', action)
+    console.log(' chamou', action);
     if (action === 'Log out') {
       this.onLogout();
     }

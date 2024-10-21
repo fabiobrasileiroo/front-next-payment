@@ -75,7 +75,8 @@ export class SignInComponent implements OnInit {
       next: (response) => {
         const menu = response.menu; // Get the menu from the response
         console.log("🚀 ~ SignInComponent ~ this.loginService.login ~ response:", response)
-        const token = response.token;
+        const {token}= response;
+        const {email,name,imageUrl} = response.user
         this.loginService.saveToken(token);
 
         // Save menu data to localStorage or a service
@@ -83,10 +84,12 @@ export class SignInComponent implements OnInit {
               // Update the menu dynamically using MenuService
         this.menuService.setMenu(menu); // Set the menu in the service
 
-        if (rememberMe) {
-          localStorage.setItem('email', email);
+        // if (rememberMe) {
+        localStorage.setItem('email', email);
+        localStorage.setItem('name', name);
+        localStorage.setItem('imageUrl', imageUrl);
           // localStorage.setItem('password', password); // In production, avoid storing sensitive info like this.
-        }
+        // }
 
         this._router.navigate(['/']);
         this.loading = false;
