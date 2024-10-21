@@ -1,0 +1,59 @@
+<div class="mx-auto px-4 py-4 sm:px-8 lg:container">
+  <!-- Header -->
+  <app-products-header></app-products-header>
+  <!-- end Header -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="p-6 max-w-lg mx-auto bg-white rounded-xl shadow-md space-y-4">
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+        <input type="text" id="name" formControlName="name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        <div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="text-red-500 text-sm">
+          Name is required.
+        </div>
+      </div>
+
+      <div>
+        <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+        <input type="number" id="price" formControlName="price" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="text-red-500 text-sm">
+          Price must be a positive number.
+        </div>
+      </div>
+
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea id="description" formControlName="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+      </div>
+
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+        <input type="text" id="category" formControlName="nameCategory" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        <div *ngIf="productForm.get('nameCategory')?.invalid && productForm.get('nameCategory')?.touched" class="text-red-500 text-sm">
+          Category is required.
+        </div>
+      </div>
+
+      <div>
+        <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+        <input type="number" id="quantity" formControlName="quantity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        <div *ngIf="productForm.get('quantity')?.invalid && productForm.get('quantity')?.touched" class="text-red-500 text-sm">
+          Quantity must be a positive number.
+        </div>
+      </div>
+      
+      <div>
+        <label for="imageFile" class="block text-sm font-medium text-gray-700">Upload Image</label>
+        <input type="file" id="imageFile" (change)="onFileSelected($event)" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+      </div>
+
+      <div>
+        <label for="imageUrl" class="block text-sm font-medium text-gray-700">Or Image URL</label>
+        <input type="url" id="imageUrl" formControlName="imageUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+      </div>
+
+      <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700" [disabled]="productForm.invalid">
+        Create Product
+      </button>
+    </form>
+  </div>
+</div>
