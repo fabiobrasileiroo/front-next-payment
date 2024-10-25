@@ -3,6 +3,9 @@
 ## Descrição
 Aplicação front-end para o sistema de Ponto de Venda (PDV), desenvolvida em Angular. A aplicação permite gerenciar produtos, usuários e realizar operações de venda, integrando-se ao backend para autenticação e processamento de pagamentos.
 
+<img src="https://github.com/user-attachments/assets/f5571745-708e-47bd-89d8-cd7a74f0929a" alt="Descrição da imagem" >
+
+
 ## Funcionalidades Implementadas (RFs)
 - [ ] **RF01:** Implementar página de cadastro de produtos.
 - [ ] **RF02:** Implementar listagem de produtos com paginação.
