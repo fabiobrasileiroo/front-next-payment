@@ -36,18 +36,18 @@ import { InputIconModule } from 'primeng/inputicon';
 import { Table } from 'primeng/table';
 
 // Interfaces para tipagem do JSON atualizado
-interface Company {
+export interface Company {
   id: number;
   name: string;
   document: string;
 }
 
-interface Category {
+export interface Category {
   id: number;
   name: string;
 }
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   price: number;
@@ -305,7 +305,7 @@ export class AddProductComponent implements OnInit {
 
   private createProduct(formData: any): void {
     console.log(formData)
-    this.productService.sendDataToApi(formData).subscribe(
+    this.productService.createProducts(formData).subscribe(
       (response) => {
         this.products.push(response);
         this.showSuccess('Product created successfully');
@@ -335,8 +335,9 @@ export class AddProductComponent implements OnInit {
     this.productService.updateProducts(formData).subscribe(
       (response) => {
         console.log(response)
-        // const index = this.products.findIndex(p => p.id === formData.id);
-        // if (index !== -1) this.products[index] = response;
+        // this.products.push(response);
+        const index = this.products.findIndex(p => p.id === formData.id);
+        if (index !== -1) this.products[index] = response;
         this.showSuccess('Product updated successfully');
         this.closeDialog();
       },
@@ -397,8 +398,20 @@ export class AddProductComponent implements OnInit {
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.products = this.products.filter((val) => val.id !== product.id);
-        this.product = {} as Product;
+        // this.products = this.products.filter((val) => val.id !== product.id);
+        this.productService.deleteProducts(product).subscribe(
+          (response) => {
+            console.log("🚀 ~ AddProductComponent ~ deleteProduct ~ response:", response)
+                this.products = this.products.filter((p) => p.id !== product.id);
+            this.showSuccess('Product created successfully');
+            this.closeDialog();
+          },
+          (error) => {
+            this.showError('Error creating product');
+            console.error('Error:', error);
+          }
+        );
+        // this.product = {} as Product;
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
       }
     });
@@ -458,7 +471,7 @@ export class AddProductComponent implements OnInit {
   // }
 
   private sendData(formData: any): void {
-    this.productService.sendDataToApi(formData).subscribe(
+    this.productService.createProducts(formData).subscribe(
       (response) => {
         this.resetLoading();
         this.showSuccess('Product created successfully');
