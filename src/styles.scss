@@ -1,10 +1,91 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* PrimeNg*/
+@import 'primeicons/primeicons.css';
 
+// tailwindcss
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
 @layer base {
+  /* styles.scss */
+  /* Estilo para a cor de fundo, texto e efeito de desfoque */
+// .p-toast .bg-customToast  {
+//   background-color: hsl(var(--primary) / 0.8); /* Fundo com opacidade para permitir o blur */
+//   color: hsl(var(--primary-foreground)) !important;
+//   backdrop-filter: blur(8px); /* Efeito de desfoque no fundo */
+//   border-radius: 8px; /* Borda arredondada opcional */
+// }
+
+// /* Estilo para o texto da mensagem detalhada */
+// .p-toast .bg-customToast .p-toast-detail {
+//   color: hsl(var(--primary-foreground)) !important;
+// }
+
+/* Estilo para o ícone de fechamento (o "x") */
+// .p-toast .bg-customToast .p-toast-icon-close {
+//   color: hsl(var(--primary-foreground)) !important;
+//   opacity: 0.8; /* Ajuste de opacidade */
+// }
+
+// .p-toast .bg-customToast .p-toast-icon-close:hover {
+//   opacity: 1;
+// }
+// .p-toast-close-icon,timesicon {
+//   color: #fff !important;
+// }
+
+// .p-toast-close-icon:hover,timesicon:hover {
+//   color: #fff !important;
+//   opacity: .4;
+// }
+
+// // table
+// .p-toolbar.p-component {
+//     background-color: hsl(var(--background)); /* Cor de fundo */
+//   color: hsl(var(--foreground)); /* Cor do texto */
+//   border: hsl(var(--border));
+// }
+// .p-datatable-header {
+//   background-color: hsl(var(--background)) !important; /* Cor de fundo */
+//   color: hsl(var(--foreground)) !important; /* Cor do texto */
+//     border-color: var(--p-datatable-header-border-color);
+//     border-style: solid;
+//     border-width: var(--p-datatable-header-border-width);
+//     padding: var(--p-datatable-header-padding);
+// }
+// :host ::ng-deep .p-datatable {
+//   background-color: hsl(var(--background)); /* Cor de fundo */
+//   color: hsl(var(--foreground)); /* Cor do texto */
+
+//   /* Cabeçalho da Tabela */
+//   .p-datatable-thead > tr > th {
+//     background-color: hsl(var(--card));
+//     color: hsl(var(--foreground));
+//     border-bottom: 1px solid hsl(var(--border));
+//   }
+
+//   /* Cor de Fundo das Linhas */
+//   .p-datatable-tbody > tr {
+//     background-color: hsl(var(--card));
+//     color: hsl(var(--card-foreground));
+//   }
+
+  /* Cor de Fundo das Linhas ao Passar o Mouse */
+  // .p-datatable-tbody > tr:hover {
+  //   background-color: hsl(var(--muted));
+  //   color: hsl(var(--muted-foreground));
+  // }
+
+  // /* Cor de Fundo das Linhas Selecionadas */
+  // .p-datatable-tbody > tr.p-highlight {
+  //   background-color: hsl(var(--primary));
+  //   color: hsl(var(--primary-foreground));
+  // }
+// }
+
+
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;

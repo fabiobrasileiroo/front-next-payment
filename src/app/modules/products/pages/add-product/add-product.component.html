@@ -1,59 +1,279 @@
 <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
   <!-- Header -->
   <app-products-header></app-products-header>
-  <!-- end Header -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="p-6 max-w-lg mx-auto bg-white rounded-xl shadow-md space-y-4">
+
+  <div class="card">
+    <p-toast></p-toast>
+    <p-toolbar styleClass="mb-6 gap-2 bg-background">
+      <ng-template pTemplate="left">
+        <p-button pRipple severity="success" label="New" icon="pi pi-plus" class="mr-2" (click)="openNew()" />
+        <p-button pRipple severity="danger" label="Delete" icon="pi pi-trash" (click)="deleteSelectedProducts()"
+          [disabled]="!selectedProducts || !selectedProducts.length" />
+      </ng-template>
+      <!-- <ng-template pTemplate="right">
+        <p-fileupload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import"
+          class="mr-2 inline-block" />
+        <p-button pRipple severity="help" label="Export" icon="pi pi-upload" />
+      </ng-template> -->
+    </p-toolbar>
+
+    <!-- Tabela com Skeleton -->
+    <p-table *ngIf="!isLoading; else loadingSkeleton" #dt [value]="products" [rows]="10" [paginator]="true"
+      [globalFilterFields]="['name', 'company.name', 'category.name', 'description']"
+      [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedProducts" [rowHover]="true" dataKey="id"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+      <ng-template pTemplate="caption">
+        <div class="flex items-center justify-between">
+          <h5 class="m-0">Gerenciar produtos</h5>
+          <p-iconfield iconPosition="left" class="ml-4">
+            <p-inputicon>
+              <i class="pi pi-search"></i>
+            </p-inputicon>
+            <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" placeholder="Search" />
+          </p-iconfield>
+        </div>
+      </ng-template>
+      <!-- Cabeçalho da Tabela -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+          <th pSortableColumn="name" style="min-width:15rem">Name <p-sortIcon field="name" /></th>
+          <th>Image</th>
+          <th pSortableColumn="price">Price <p-sortIcon field="price" /></th>
+          <th pSortableColumn="category.name" style="min-width:10rem">Category <p-sortIcon field="category.name" /></th>
+          <th pSortableColumn="quantity">Quantity <p-sortIcon field="quantity" /></th>
+          <th pSortableColumn="company.name" style="min-width:10rem">Company <p-sortIcon field="company.name" /></th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <!-- Corpo da Tabela com Dados -->
+      <ng-template pTemplate="body" let-product>
+        <tr>
+          <td><p-tableCheckbox [value]="product" /></td>
+          <td>{{ product.name }}</td>
+          <td><img [src]="product.imageUrl" [alt]="product.name" width="50" class="shadow-lg" /></td>
+          <td>{{ product.price | currency : 'USD' }}</td>
+          <td>{{ product.category?.name || 'No Category' }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.company?.name || 'No Company' }}</td>
+          <td>{{ product.description }}</td>
+          <td>
+            <p-button pRipple icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" severity="success"
+              (click)="editProduct(product)" />
+            <p-button pRipple icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+              (click)="deleteProduct(product)" />
+          </td>
+        </tr>
+      </ng-template>
+    <ng-template pTemplate="summary">
+        <div class="flex items-center justify-between text-foreground">
+            No total são {{ products ? products.length : 0 }} produtos.
+        </div>
+    </ng-template>
+    </p-table>
+
+    <!-- Skeleton para Carregamento da Tabela -->
+    <ng-template #loadingSkeleton>
+      <p-table [value]="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" [rows]="10">
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td><p-skeleton width="2rem" height="1rem"></p-skeleton></td>
+            <td><p-skeleton width="5rem" height="1rem"></p-skeleton></td>
+            <td><p-skeleton width="3rem" height="3rem"></p-skeleton></td>
+            <td><p-skeleton width="5rem" height="1rem"></p-skeleton></td>
+            <td><p-skeleton width="5rem" height="1rem"></p-skeleton></td>
+            <td><p-skeleton width="5rem" height="1rem"></p-skeleton></td>
+            <td><p-skeleton width="8rem" height="1rem"></p-skeleton></td>
+            <td><p-skeleton width="8rem" height="1rem"></p-skeleton></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ng-template>
+
+    <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true"
+      styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <div *ngIf="!isLoading; else dialogLoadingSkeleton">
+          <!-- Image Preview if URL or File Provided -->
+          <img [src]="base64Image || product!.imageUrl" [alt]="product!.name || 'Product Image'"
+            class="block m-auto pb-4" *ngIf="base64Image || product!.imageUrl" />
+
+          <!-- Product Name Field -->
+          <div>
+            <label for="name" class="block font-bold mb-3">Name</label>
+            <input type="text" pInputText id="name" [(ngModel)]="product!.name" required autofocus fluid />
+            <small class="text-red-500" *ngIf="submitted && !product!.name">Name is required.</small>
+          </div>
+
+          <!-- Product Description Field -->
+          <div>
+            <label for="description" class="block font-bold mb-3">Description</label>
+            <textarea id="description" pTextarea [(ngModel)]="product!.description" required rows="3" cols="20"
+              fluid></textarea>
+          </div>
+
+          <!-- Product Category Dropdown (Editable) -->
+          <div>
+            <label for="categoryId" class="block font-bold mb-3">Category</label>
+            <p-dropdown [(ngModel)]="product!.categoryId" inputId="categoryId" placeholder="Select or type a Category"
+              [options]="categories" editable="true" (onBlur)="checkForNewCategory($event)" fluid></p-dropdown>
+          </div>
+
+          <!-- Price and Quantity Fields -->
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-6">
+              <label for="price" class="block font-bold mb-3">Price</label>
+              <p-inputnumber id="price" [(ngModel)]="product!.price" mode="currency" currency="USD" locale="en-US"
+                fluid />
+            </div>
+            <div class="col-span-6">
+              <label for="quantity" class="block font-bold mb-3">Quantity</label>
+              <p-inputnumber id="quantity" [(ngModel)]="product!.quantity" fluid />
+            </div>
+          </div>
+
+          <!-- Image URL or File Upload Fields -->
+          <div class="flex flex-col">
+            <label class="block font-bold mb-3">Image</label>
+            <div class="flex flex-col items-start gap-2">
+              <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
+              <input type="text" pInputText placeholder="Enter image URL" [(ngModel)]="product!.imageUrl"
+                (change)="onImageUrlEntered()" />
+              <label for="imageFile" class="block text-sm font-medium text-gray-700">Or Upload Image</label>
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Action Buttons (Save and Cancel) -->
+      <ng-template pTemplate="footer">
+        <p-button pRipple label="Cancel" icon="pi pi-times" [text]="true" (click)="hideDialog()" />
+        <p-button pRipple label="Save" icon="pi pi-check" (click)="saveProduct()" />
+      </ng-template>
+    </p-dialog>
+
+    <!-- Skeleton Loader for Dialog -->
+    <ng-template #dialogLoadingSkeleton>
       <div>
-        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-        <input type="text" id="name" formControlName="name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        <p-skeleton width="100%" height="200px" ><div class="mb-4"></div></p-skeleton>
+        <p-skeleton width="100%" height="1.5rem" class="mb-3"></p-skeleton>
+        <p-skeleton width="100%" height="3rem" class="mb-3"></p-skeleton>
+        <p-skeleton width="100%" height="1.5rem" class="mb-3"></p-skeleton>
+        <p-skeleton width="100%" height="3rem" class="mb-3"></p-skeleton>
+      </div>
+    </ng-template>
+
+    <!-- Diálogo de Confirmação -->
+    <p-confirmdialog [style]="{ width: '450px' }" />
+  </div>
+
+  <!-- end Header -->
+  <!-- <div class="grid">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()"
+      class="p-6 max-w-lg mx-auto bg-background rounded-xl shadow-md space-y-4">
+
+      <!-- Nome do produto ->
+      <div>
+        <label for="name" class="block text-sm font-normal text-foreground">Name</label>
+        <p-skeleton *ngIf="isLoading; else nameField" height="2.5rem" class="w-full"></p-skeleton>
+        <ng-template #nameField>
+          <input type="text" id="name" formControlName="name"
+            class="mt-1 block w-full border-border rounded-md shadow-sm " />
+        </ng-template>
         <div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="text-red-500 text-sm">
           Name is required.
         </div>
       </div>
 
+      <!-- Preço do produto ->
       <div>
-        <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
-        <input type="number" id="price" formControlName="price" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
-        <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="text-red-500 text-sm">
+        <label for="price" class="block text-sm font-normal text-foreground">Price</label>
+        <p-skeleton *ngIf="isLoading; else priceField" height="2.5rem" class="w-full"></p-skeleton>
+        <ng-template #priceField>
+          <input type="number" id="price" formControlName="price"
+            class="mt-1 block w-full border-border rounded-md shadow-sm" />
+        </ng-template>
+        <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched"
+          class="text-red-500 text-sm">
           Price must be a positive number.
         </div>
       </div>
 
+      <!-- Descrição do produto ->
       <div>
-        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea id="description" formControlName="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+        <label for="description" class="block text-sm font-medium text-foreground">Description</label>
+        <p-skeleton *ngIf="isLoading; else descriptionField" height="5rem" class="w-full"></p-skeleton>
+        <ng-template #descriptionField>
+          <textarea id="description" formControlName="description"
+            class="mt-1 block w-full border-border rounded-md shadow-sm"></textarea>
+        </ng-template>
       </div>
 
+      <!-- Categoria do produto ->
       <div>
         <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-        <input type="text" id="category" formControlName="nameCategory" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
-        <div *ngIf="productForm.get('nameCategory')?.invalid && productForm.get('nameCategory')?.touched" class="text-red-500 text-sm">
+        <p-skeleton *ngIf="isLoading; else categoryField" height="2.5rem" class="w-full"></p-skeleton>
+        <ng-template #categoryField>
+          <input type="text" id="category" formControlName="nameCategory"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        </ng-template>
+        <div *ngIf="productForm.get('nameCategory')?.invalid && productForm.get('nameCategory')?.touched"
+          class="text-red-500 text-sm">
           Category is required.
         </div>
       </div>
 
+      <!-- Quantidade do produto ->
       <div>
         <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-        <input type="number" id="quantity" formControlName="quantity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
-        <div *ngIf="productForm.get('quantity')?.invalid && productForm.get('quantity')?.touched" class="text-red-500 text-sm">
+        <p-skeleton *ngIf="isLoading; else quantityField" height="2.5rem" class="w-full"></p-skeleton>
+        <ng-template #quantityField>
+          <input type="number" id="quantity" formControlName="quantity"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        </ng-template>
+        <div *ngIf="productForm.get('quantity')?.invalid && productForm.get('quantity')?.touched"
+          class="text-red-500 text-sm">
           Quantity must be a positive number.
         </div>
       </div>
-      
+
+      <!-- Upload de imagem do produto ->
       <div>
         <label for="imageFile" class="block text-sm font-medium text-gray-700">Upload Image</label>
-        <input type="file" id="imageFile" (change)="onFileSelected($event)" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        <p-skeleton *ngIf="isLoading; else imageFileField" height="2.5rem" class="w-full"></p-skeleton>
+        <ng-template #imageFileField>
+          <input type="file" id="imageFile" (change)="onFileSelected($event)"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        </ng-template>
       </div>
 
-      <div>
+      <!-- URL da imagem do produto ->
+      <div style="margin-bottom: 14px;">
         <label for="imageUrl" class="block text-sm font-medium text-gray-700">Or Image URL</label>
-        <input type="url" id="imageUrl" formControlName="imageUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        <p-skeleton *ngIf="isLoading; else imageUrlField" height="2.5rem" class="w-full"></p-skeleton>
+        <ng-template #imageUrlField>
+          <input type="url" id="imageUrl" formControlName="imageUrl"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+        </ng-template>
       </div>
 
-      <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700" [disabled]="productForm.invalid">
-        Create Product
-      </button>
+      <!-- Toast de sucesso/erro e botão de submissão ->
+      <p-toast [showTransformOptions]="'translateY(100%)'" [showTransitionOptions]="'1000ms'"
+        [hideTransitionOptions]="'1000ms'"></p-toast>
+      <p-skeleton *ngIf="isLoading; else buttonField" height="2.5rem" width="100%" class="rounded-md"></p-skeleton>
+      <ng-template #buttonField>
+        <!-- <app-button pRipple (click)="showToastSuccess()" [loading]="loading" full impact="bold" tone="primary"
+          shape="rounded" size="medium" class="mb-4 w-full" [disabled]="productForm.invalid">
+          Entrar
+        </app-button> ->
+      </ng-template>
     </form>
-  </div>
+  </div> -->
 </div>
+
+<!-- <div class="mx-auto px-2 py-2 sm:px-4 lg:container">
+  
+</div> -->
+<!-- end table -->
