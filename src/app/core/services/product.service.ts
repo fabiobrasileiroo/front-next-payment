@@ -8,7 +8,6 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductService {
   private apiUrl = `${environment.apiUrl}/api/products`;
-  private apiUrlUpdate = `${environment.apiUrl}/api/`;
 
   constructor(private http: HttpClient) { }
 
@@ -23,13 +22,25 @@ export class ProductService {
 
 
   updateProducts(formData: any): Observable<any> {
+    const {id}= formData
      const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.get<any>(this.apiUrl, { headers });
+    return this.http.put<any>(`${this.apiUrl}/${id}`, formData, { headers });
   }
+
+  deleteProducts(formData: any): Observable<any> {
+    const { id } = formData
+     const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers });
+  }
+
   // Método para enviar os dados do produto para a API
   sendDataToApi(data: any): Observable<any> {
     console.log("🚀 ~ ProductService ~ sendDataToApi ~ data:", data)

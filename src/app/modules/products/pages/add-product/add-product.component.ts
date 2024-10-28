@@ -334,8 +334,9 @@ export class AddProductComponent implements OnInit {
     formData.id = this.product.id; // Inclui o ID do produto a ser atualizado
     this.productService.updateProducts(formData).subscribe(
       (response) => {
-        const index = this.products.findIndex(p => p.id === formData.id);
-        if (index !== -1) this.products[index] = response;
+        console.log(response)
+        // const index = this.products.findIndex(p => p.id === formData.id);
+        // if (index !== -1) this.products[index] = response;
         this.showSuccess('Product updated successfully');
         this.closeDialog();
       },
