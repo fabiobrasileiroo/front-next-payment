@@ -362,19 +362,43 @@ export class AddProductComponent implements OnInit {
   //   this.base64Image = null;
   //   this.imageUrl = null;
   // }
-
   deleteSelectedProducts() {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected products?',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.products = this.products.filter((val) => !this.selectedProducts?.includes(val));
-        this.selectedProducts = null;
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-      }
-    });
-  }
+  this.confirmationService.confirm({
+    message: 'Are you sure you want to delete the selected products?',
+    header: 'Confirm',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      const ids :any = this.selectedProducts?.map(product => product.id);
+      console.log("🚀 ~ AddProductComponent ~ deleteSelectedProducts ~ ids:", ids)
+
+      this.productService.deleteProductsMult(ids).subscribe({
+        next: () => {
+          // Remove os produtos da lista local
+          this.products = this.products.filter((val) => !this.selectedProducts?.includes(val));
+          this.selectedProducts = null;
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+        },
+        error: (error) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+        }
+      });
+    }
+  });
+}
+
+
+  // deleteSelectedProducts() {
+  //   this.confirmationService.confirm({
+  //     message: 'Are you sure you want to delete the selected products?',
+  //     header: 'Confirm',
+  //     icon: 'pi pi-exclamation-triangle',
+  //     accept: () => {
+  //       this.products = this.products.filter((val) => !this.selectedProducts?.includes(val));
+  //       this.selectedProducts = null;
+  //       this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+  //     }
+  //   });
+  // }
 
   // editProduct(product: Product) {
   //   this.product = { ...product };

@@ -41,6 +41,20 @@ export class ProductService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers });
   }
 
+  deleteProductsMult(ids: number[]): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+  });
+
+  // Envia os IDs no corpo da requisição usando a opção `body`
+  return this.http.delete<any>(`${this.apiUrl}`, {
+    headers,
+    body: { ids }, // Passa `ids` dentro de um objeto
+  });
+}
+
+
   // Método para enviar os dados do produto para a API
   createProducts(data: any): Observable<any> {
     console.log("🚀 ~ ProductService ~ sendDataToApi ~ data:", data)
