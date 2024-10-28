@@ -9,11 +9,11 @@ Aplicação front-end para o sistema de Ponto de Venda (PDV), desenvolvida em An
 
 
 ## Funcionalidades Implementadas (RFs)
-- [ ] **RF01:** Implementar página de cadastro de produtos.
-- [ ] **RF02:** Implementar listagem de produtos com paginação.
+- [x] **RF01:** Implementar página de cadastro de produtos.
+- [x] **RF02:** Implementar listagem de produtos com paginação.
 - [ ] **RF03:** Implementar busca de produto por nome ou ID.
-- [ ] **RF04:** Implementar formulário para atualização de produto.
-- [ ] **RF05:** Implementar deleção de produto com confirmação.
+- [x] **RF04:** Implementar formulário para atualização de produto.
+- [x] **RF05:** Implementar deleção de produto com confirmação.
 - [x] **RF06:** Implementar integração com pagamento via PIX.
 - [ ] **RF07:** Implementar verificação de status de pagamento.
 - [ ] **RF08:** Implementar funcionalidade de solicitação de reembolso.
