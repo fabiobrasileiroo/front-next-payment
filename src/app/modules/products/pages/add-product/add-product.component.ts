@@ -287,14 +287,14 @@ export class AddProductComponent implements OnInit {
         console.log('entrou aqui')
         this.onSubmit()
         // this.products[this.findIndexById(this.product.id)] = this.product;
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Produto Atualizado', styleClass:"!bg-card !border-border !text-foreground", life: 3000 });
       } else {
         console.log('entrou aqui')
         // Criar novo produto
         // this.product.id = this.createId();
         this.onSubmit()
         // this.products.push(this.product);
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Produto criado', styleClass:"!bg-card !border-border !text-foreground", life: 3000 });
       }
 
       this.products = [...this.products];
@@ -376,10 +376,10 @@ export class AddProductComponent implements OnInit {
             // Remove os produtos da lista local
             this.products = this.products.filter((val) => !this.selectedProducts?.includes(val));
             this.selectedProducts = null;
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', styleClass:"!bg-card !border-border !text-foreground", life: 3000 });
           },
           error: (error) => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message, styleClass:"!bg-card !border-border !text-foreground", life: 3000 });
           }
         });
       }
@@ -436,7 +436,7 @@ export class AddProductComponent implements OnInit {
           }
         );
         // this.product = {} as Product;
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', styleClass:"!bg-card !border-border !text-foreground", life: 3000 });
       }
     });
   }
@@ -519,6 +519,7 @@ export class AddProductComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
+       styleClass:"!bg-card !border-border !text-foreground",
       detail: message
     });
   }
@@ -529,6 +530,7 @@ export class AddProductComponent implements OnInit {
     this.messageService.add({
       severity: 'error',
       summary: 'Error',
+       styleClass:"!bg-card !border-border !text-foreground",
       detail: message
     });
   }

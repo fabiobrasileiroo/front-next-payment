@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Pipe, ViewChild } from '@angular/core';
 import { Nft } from '../../models/nft';
 import { NftAuctionsTableComponent } from '../../components/nft/nft-auctions-table/nft-auctions-table.component';
 import { NftChartCardComponent } from '../../components/nft/nft-chart-card/nft-chart-card.component';
@@ -6,8 +6,13 @@ import { NftSingleCardComponent } from '../../components/nft/nft-single-card/nft
 import { NftDualCardComponent } from '../../components/nft/nft-dual-card/nft-dual-card.component';
 import { NftHeaderComponent } from '../../components/nft/nft-header/nft-header.component';
 import { ProductService } from 'src/app/core/services/product.service';
-import { CurrencyPipe, NgFor, NgStyle } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe, NgFor, NgStyle } from '@angular/common';
 import { PaymentService } from 'src/app/core/services/payment-pix.service';
+import {
+  EmblaCarouselDirective,
+  EmblaCarouselType
+} from 'embla-carousel-angular'
+import { pipe } from 'rxjs';
 
 @Component({
   selector: 'app-nft',
@@ -22,14 +27,24 @@ import { PaymentService } from 'src/app/core/services/payment-pix.service';
     NftAuctionsTableComponent,
     CurrencyPipe,
     NgStyle,
+    DatePipe,
+    CommonModule,
+    EmblaCarouselDirective
   ],
+    styleUrls: ['./produtos.component.css'],
 })
-export class NftComponent implements OnInit {
+export class NftComponent implements OnInit,AfterViewInit {
+  @ViewChild(EmblaCarouselDirective) emblaRef: EmblaCarouselDirective | undefined
 
+  public emblaApi?: EmblaCarouselType
+  public options = { loop: false }
   // nft: Array<Nft>;
   // products: Array<any> = []
   products!: any
   selectedProducts: Array<any> = [];
+   productsByCategory: { [category: string]: any[] } = {};
+     isBeginning = true;
+  isEnd = false;
 
   constructor(private productService: ProductService, private paymentService: PaymentService) {
     // this.nft = [
@@ -66,9 +81,38 @@ export class NftComponent implements OnInit {
       this.products = data
       console.log("🚀 ~ NftComponent ~ this.productService.getProducts ~ products:", data)
     })
+    this.productService.getProducts().subscribe((data) => {
+      this.groupProductsByCategory(data);
+    });
   }
 
-  // Toggle product selection for the cart
+
+  ngAfterViewInit() {
+    if (this.emblaRef) {
+      this.emblaApi = this.emblaRef.emblaApi;
+
+      // Update arrow visibility on initialization and on scroll events
+      this.updateArrowsVisibility();
+      this.emblaApi!.on('select', () => this.updateArrowsVisibility());
+    }
+  }
+
+  updateArrowsVisibility() {
+    if (this.emblaApi) {
+      this.isBeginning = this.emblaApi.canScrollPrev() === false;
+      this.isEnd = this.emblaApi.canScrollNext() === false;
+    }
+  }
+
+  private groupProductsByCategory(products: any[]): void {
+    this.productsByCategory = products.reduce((acc, product) => {
+      const category = product.category ? product.category.name : 'Sem Categoria';
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(product);
+      return acc;
+    }, {});
+  }
+    // Toggle product selection for the cart
   toggleSelection(product: any) {
     const index = this.selectedProducts.findIndex(p => p.id === product.id);
     if (index > -1) {
@@ -133,4 +177,7 @@ export class NftComponent implements OnInit {
       }
     );
   }
+
+
+
 }

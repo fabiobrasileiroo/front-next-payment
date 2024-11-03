@@ -1,0 +1,46 @@
+.embla-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.embla {
+  overflow: hidden;
+  flex: 1;
+}
+
+.embla__container {
+  display: flex;
+}
+
+.embla__slide {
+  flex: 0 0 40%;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+
+.embla__button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.embla__button--prev {
+  left: -20px;
+}
+
+.embla__button--next {
+  right: -20px;
+}
