@@ -11,8 +11,20 @@
       class="flex-none rounded-md bg-muted px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground">
       Carrinho
     </button>
-    <button class="flex-none rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground">
+    
+    <p-button 
+    class="flex-none rounded-md bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground"
+    type="button" styleClass="!w-full md:!w-80 lg:!w-[30rem]" (click)="visible = true"  >
       Finaliza comprar
-    </button>
+    </p-button>
+        <!-- <p-button type="button" (click)="visible = true" icon="pi pi-arrow-left" /> -->
   </div>
 </div>
+
+<p-drawer header="Finalizar pagamento" [(visible)]="visible" position="right">
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+        aliquip ex ea commodo consequat.
+    </p>
+</p-drawer>

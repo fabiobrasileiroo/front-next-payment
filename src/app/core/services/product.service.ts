@@ -20,6 +20,22 @@ export class ProductService {
     return this.http.get<any>(this.apiUrl, { headers });
   }
 
+  updateProductQuantity(productId: number, quantityChange: any): Observable<any> {
+    console.log("🚀 chego", quantityChange)
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    }); 
+
+    // Define a URL com base em se a mudança é positiva (increase) ou negativa (decrease)
+    const url = quantityChange > 0
+      ? `${this.apiUrl}/${productId}/increase`
+      : `${this.apiUrl}/${productId}/decrease`;
+
+    // Envia apenas a quantidade de mudança (número positivo ou negativo)
+    return this.http.put(url, { quantity: Math.abs(quantityChange) }, { headers });
+  }
+
 
   updateProducts(formData: any): Observable<any> {
     const { id } = formData
@@ -42,17 +58,17 @@ export class ProductService {
   }
 
   deleteProductsMult(ids: number[]): Observable<any> {
-  const token = localStorage.getItem('token');
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`,
-  });
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
 
-  // Envia os IDs no corpo da requisição usando a opção `body`
-  return this.http.delete<any>(`${this.apiUrl}`, {
-    headers,
-    body: { ids }, // Passa `ids` dentro de um objeto
-  });
-}
+    // Envia os IDs no corpo da requisição usando a opção `body`
+    return this.http.delete<any>(`${this.apiUrl}`, {
+      headers,
+      body: { ids }, // Passa `ids` dentro de um objeto
+    });
+  }
 
 
   // Método para enviar os dados do produto para a API

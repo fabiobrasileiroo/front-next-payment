@@ -363,28 +363,28 @@ export class AddProductComponent implements OnInit {
   //   this.imageUrl = null;
   // }
   deleteSelectedProducts() {
-  this.confirmationService.confirm({
-    message: 'Are you sure you want to delete the selected products?',
-    header: 'Confirm',
-    icon: 'pi pi-exclamation-triangle',
-    accept: () => {
-      const ids :any = this.selectedProducts?.map(product => product.id);
-      console.log("🚀 ~ AddProductComponent ~ deleteSelectedProducts ~ ids:", ids)
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete the selected products?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const ids: any = this.selectedProducts?.map(product => product.id);
+        console.log("🚀 ~ AddProductComponent ~ deleteSelectedProducts ~ ids:", ids)
 
-      this.productService.deleteProductsMult(ids).subscribe({
-        next: () => {
-          // Remove os produtos da lista local
-          this.products = this.products.filter((val) => !this.selectedProducts?.includes(val));
-          this.selectedProducts = null;
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-        },
-        error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
-        }
-      });
-    }
-  });
-}
+        this.productService.deleteProductsMult(ids).subscribe({
+          next: () => {
+            // Remove os produtos da lista local
+            this.products = this.products.filter((val) => !this.selectedProducts?.includes(val));
+            this.selectedProducts = null;
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+          },
+          error: (error) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+          }
+        });
+      }
+    });
+  }
 
 
   // deleteSelectedProducts() {
@@ -426,7 +426,7 @@ export class AddProductComponent implements OnInit {
         this.productService.deleteProducts(product).subscribe(
           (response) => {
             console.log("🚀 ~ AddProductComponent ~ deleteProduct ~ response:", response)
-                this.products = this.products.filter((p) => p.id !== product.id);
+            this.products = this.products.filter((p) => p.id !== product.id);
             this.showSuccess('Product created successfully');
             this.closeDialog();
           },
@@ -557,6 +557,43 @@ export class AddProductComponent implements OnInit {
       });
     }
   }
+
+  updateQuantity(product: Product, newQuantity: number) {
+    console.log("🚀 ~ AddProductComponent ~ updateQuantity ~ newQuantity:", newQuantity)
+    if (newQuantity < 0) return; // Impede quantidades negativas
+
+    const quantityDifference = newQuantity - product.quantity;
+    console.log("🚀 ~ AddProductComponent ~ updateQuantity ~ quantityDifference:", quantityDifference)
+
+    // Atualiza visualmente a quantidade antes de confirmar com a API
+    product.quantity = newQuantity;
+    console.log("🚀 ~ AddProductComponent ~ updateQuantity ~ quantity:", product.quantity)
+
+    // Chama a API para atualizar a quantidade com a URL adequada
+    console.log('antes de ir', quantityDifference)
+    this.productService.updateProductQuantity(product.id, quantityDifference)
+      .subscribe({
+        next: () => console.log('Quantidade atualizada com sucesso'),
+        error: (err: Error) => {
+          console.error('Erro ao atualizar quantidade:', err);
+          // Reverte visualmente a quantidade se ocorrer um erro
+          product.quantity -= quantityDifference;
+        }
+      });
+  }
+
+  submitQuantityChange(product: any ) {
+  const newQuantity = product.quantityInput;
+
+  // Calcula a diferença
+  const quantityDifference = newQuantity - product.quantity;
+
+  // Se não houver diferença, não envia a requisição
+  if (quantityDifference === 0) return;
+
+  // Atualiza visualmente e chama a API
+  this.updateQuantity(product, newQuantity);
+}
 
   // Função para converter URL da imagem em base64
   private convertImageUrlToBase64(url: string): Promise<string> {

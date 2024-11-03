@@ -21,16 +21,17 @@ import { PaymentService } from 'src/app/core/services/payment-pix.service';
     NftChartCardComponent,
     NftAuctionsTableComponent,
     CurrencyPipe,
-    NgStyle 
+    NgStyle,
   ],
 })
 export class NftComponent implements OnInit {
+
   // nft: Array<Nft>;
   // products: Array<any> = []
   products!: any
-    selectedProducts: Array<any> = [];
+  selectedProducts: Array<any> = [];
 
-  constructor(private productService: ProductService,private paymentService: PaymentService) {
+  constructor(private productService: ProductService, private paymentService: PaymentService) {
     // this.nft = [
     //   {
     //     id: 34356771,
@@ -61,7 +62,7 @@ export class NftComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.productService.getProducts().subscribe((data)=> {
+    this.productService.getProducts().subscribe((data) => {
       this.products = data
       console.log("🚀 ~ NftComponent ~ this.productService.getProducts ~ products:", data)
     })
@@ -93,9 +94,9 @@ export class NftComponent implements OnInit {
       (response) => {
         const paymentUrl = response.point_of_interaction.transaction_data.ticket_url
         console.log("🚀 ~ NftComponent ~ buyNow ~ response:", paymentUrl)
-       console.log('Payment successful for ' + product.name + '!');
-      //  / Open the URL in a new tab
-      window.open(paymentUrl, '_blank');
+        console.log('Payment successful for ' + product.name + '!');
+        //  / Open the URL in a new tab
+        window.open(paymentUrl, '_blank');
       },
       (error) => {
         console.error('Payment error:', error);
