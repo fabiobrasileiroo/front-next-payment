@@ -8,7 +8,7 @@
     <!-- styleClass="!w-full md:!w-80 lg:!w-[30rem] !bg-primary !flex-none !rounded-md !border-border !px-4 !py-2.5 !text-xs !font-semibold !text-primary-foreground"  -->
     <p-toolbar styleClass="mb-6 gap-2 !bg-background !border-border">
       <ng-template pTemplate="left">
-        <p-button pRipple severity="success" label="New" icon="pi pi-plus" class="mr-2" styleClass="!bg-primary !border-border !text-primary" (click)="openNew()" />
+        <p-button pRipple severity="success" label="New" icon="pi pi-plus" class="mr-2" styleClass="!bg-primary !border-border text-primary" (click)="openNew()" />
         <p-button pRipple severity="danger" label="Delete" icon="pi pi-trash" (click)="deleteSelectedProducts()"
           [disabled]="!selectedProducts || !selectedProducts.length" />
       </ng-template>
@@ -28,7 +28,7 @@
       >
       <ng-template pTemplate="caption" styleClass="!bg-background !border-border">
         <div class="flex items-center justify-between" >
-          <h5 class="m-0">Gerenciar produtos</h5>
+          <h5 class="m-0" >Gerenciar produtos</h5>
           <p-iconfield iconPosition="left" class="ml-4">
             <p-inputicon>
               <i class="pi pi-search"></i>

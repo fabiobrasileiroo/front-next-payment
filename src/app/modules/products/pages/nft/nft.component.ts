@@ -1,18 +1,11 @@
-import { AfterViewInit, Component, OnInit, Pipe, ViewChild } from '@angular/core';
-import { Nft } from '../../models/nft';
-import { NftAuctionsTableComponent } from '../../components/nft/nft-auctions-table/nft-auctions-table.component';
-import { NftChartCardComponent } from '../../components/nft/nft-chart-card/nft-chart-card.component';
-import { NftSingleCardComponent } from '../../components/nft/nft-single-card/nft-single-card.component';
-import { NftDualCardComponent } from '../../components/nft/nft-dual-card/nft-dual-card.component';
-import { NftHeaderComponent } from '../../components/nft/nft-header/nft-header.component';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ProductService } from 'src/app/core/services/product.service';
-import { CommonModule, CurrencyPipe, DatePipe, NgFor, NgStyle } from '@angular/common';
 import { PaymentService } from 'src/app/core/services/payment-pix.service';
-import {
-  EmblaCarouselDirective,
-  EmblaCarouselType
-} from 'embla-carousel-angular'
-import { pipe } from 'rxjs';
+import { EmblaCarouselDirective, EmblaCarouselType } from 'embla-carousel-angular';
+import { NftHeaderComponent } from '../../components/nft/nft-header/nft-header.component';
+import { CommonModule, CurrencyPipe, DatePipe, NgFor, NgStyle } from '@angular/common';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ImageModule } from 'primeng/image';
 
 @Component({
   selector: 'app-nft',
@@ -21,77 +14,55 @@ import { pipe } from 'rxjs';
   imports: [
     NgFor,
     NftHeaderComponent,
-    NftDualCardComponent,
-    NftSingleCardComponent,
-    NftChartCardComponent,
-    NftAuctionsTableComponent,
     CurrencyPipe,
     NgStyle,
     DatePipe,
     CommonModule,
-    EmblaCarouselDirective
+    EmblaCarouselDirective,
+    SkeletonModule,
+    ImageModule
   ],
-    styleUrls: ['./produtos.component.css'],
+  styleUrls: ['./produtos.component.css'],
 })
-export class NftComponent implements OnInit,AfterViewInit {
-  @ViewChild(EmblaCarouselDirective) emblaRef: EmblaCarouselDirective | undefined
+export class NftComponent implements OnInit, AfterViewInit {
+  @ViewChild(EmblaCarouselDirective) emblaRef: EmblaCarouselDirective | undefined;
+  @ViewChild(NftHeaderComponent) nftHeader!: NftHeaderComponent; // Referência ao componente do header
 
-  public emblaApi?: EmblaCarouselType
-  public options = { loop: false }
-  // nft: Array<Nft>;
-  // products: Array<any> = []
-  products!: any
-  selectedProducts: Array<any> = [];
-   productsByCategory: { [category: string]: any[] } = {};
-     isBeginning = true;
+  public emblaApi?: EmblaCarouselType;
+  public options = { loop: false };
+  products: any[] = [];
+  selectedProducts: any[] = [];
+  productsByCategory: { [category: string]: any[] } = {};
+  isBeginning = true;
   isEnd = false;
+  isLoading = true;  // Variável para controlar o estado de carregamento
 
-  constructor(private productService: ProductService, private paymentService: PaymentService) {
-    // this.nft = [
-    //   {
-    //     id: 34356771,
-    //     title: 'Girls of the Cartoon Universe',
-    //     creator: 'Jhon Doe',
-    //     instant_price: 4.2,
-    //     price: 187.47,
-    //     ending_in: '06h 52m 47s',
-    //     last_bid: 0.12,
-    //     image: './assets/images/img-01.jpg',
-    //     avatar: './assets/avatars/avt-01.jpg',
-    //   },
-    //   {
-    //     id: 34356772,
-    //     title: 'Pupaks',
-    //     price: 548.79,
-    //     last_bid: 0.35,
-    //     image: './assets/images/img-02.jpg',
-    //   },
-    //   {
-    //     id: 34356773,
-    //     title: 'Seeing Green collection',
-    //     price: 234.88,
-    //     last_bid: 0.15,
-    //     image: './assets/images/img-03.jpg',
-    //   },
-    // ];
-  }
+  constructor(private productService: ProductService, private paymentService: PaymentService) {}
 
   ngOnInit(): void {
-    this.productService.getProducts().subscribe((data) => {
-      this.products = data
-      console.log("🚀 ~ NftComponent ~ this.productService.getProducts ~ products:", data)
-    })
-    this.productService.getProducts().subscribe((data) => {
-      this.groupProductsByCategory(data);
-    });
+    // Iniciar o carregamento dos produtos
+    this.loadProducts();
   }
 
+  private loadProducts(): void {
+    // Marca o início do carregamento
+    this.isLoading = true;
+
+    this.productService.getProducts().subscribe((data) => {
+      this.products = data;
+      this.groupProductsByCategory(data);
+      // Define como falso após os dados serem carregados
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 3000);
+    });
+  }
 
   ngAfterViewInit() {
     if (this.emblaRef) {
       this.emblaApi = this.emblaRef.emblaApi;
 
-      // Update arrow visibility on initialization and on scroll events
+      // Atualiza a visibilidade das setas no início e nos eventos de rolagem
       this.updateArrowsVisibility();
       this.emblaApi!.on('select', () => this.updateArrowsVisibility());
     }
@@ -99,8 +70,8 @@ export class NftComponent implements OnInit,AfterViewInit {
 
   updateArrowsVisibility() {
     if (this.emblaApi) {
-      this.isBeginning = this.emblaApi.canScrollPrev() === false;
-      this.isEnd = this.emblaApi.canScrollNext() === false;
+      this.isBeginning = !this.emblaApi.canScrollPrev();
+      this.isEnd = !this.emblaApi.canScrollNext();
     }
   }
 
@@ -112,34 +83,34 @@ export class NftComponent implements OnInit,AfterViewInit {
       return acc;
     }, {});
   }
-    // Toggle product selection for the cart
-  toggleSelection(product: any) {
-    const index = this.selectedProducts.findIndex(p => p.id === product.id);
-    if (index > -1) {
-      this.selectedProducts.splice(index, 1);
-    } else {
-      this.selectedProducts.push(product);
-    }
-  }
 
-  // Buy the selected product immediately
+  // Adiciona ou remove produtos do carrinho
+  toggleSelection(product: any) {
+  const index = this.selectedProducts.findIndex(p => p.id === product.id);
+  if (index === -1) {
+    this.selectedProducts.push(product);
+  } else {
+    this.selectedProducts.splice(index, 1);
+  }
+}
+getTotalAmount(): number {
+  return this.selectedProducts.reduce((total, product) => total + (product.price * (product.quantity || 1)), 0);
+}
+
+
+
+  // Compra o produto imediatamente usando o serviço de pagamento
   buyNow(product: any) {
     const paymentData = {
       transaction_amount: product.price,
       description: `Payment for ${product.name}`,
       payment_method_id: 'pix',
-      payer: {
-        email: 'fabio.h591@gmail.com',
-      },
+      payer: { email: 'fabio.h591@gmail.com' },
     };
 
-    // Call the payment service to process payment
     this.paymentService.createPayment(paymentData).subscribe(
       (response) => {
-        const paymentUrl = response.point_of_interaction.transaction_data.ticket_url
-        console.log("🚀 ~ NftComponent ~ buyNow ~ response:", paymentUrl)
-        console.log('Payment successful for ' + product.name + '!');
-        //  / Open the URL in a new tab
+        const paymentUrl = response.point_of_interaction.transaction_data.ticket_url;
         window.open(paymentUrl, '_blank');
       },
       (error) => {
@@ -148,7 +119,7 @@ export class NftComponent implements OnInit,AfterViewInit {
     );
   }
 
-  // Process payment for multiple selected products
+  // Processa o pagamento de múltiplos produtos selecionados
   processPayment() {
     if (this.selectedProducts.length === 0) {
       alert('Please select at least one product!');
@@ -160,17 +131,12 @@ export class NftComponent implements OnInit,AfterViewInit {
       transaction_amount: totalAmount,
       description: 'Payment for selected products',
       payment_method_id: 'pix',
-      payer: {
-        email: 'fabio@gmail.com',
-      }
+      payer: { email: 'fabio@gmail.com' },
     };
-
-    // Call the payment service to create a payment
+  
     this.paymentService.createPayment(paymentData).subscribe(
       (response) => {
-        console.log("🚀 ~ NftComponent ~ processPayment ~ response:", response)
-        console.log('payment successful')
-        // alert('Payment successful!');
+        console.log('Payment successful');
       },
       (error) => {
         console.error('Payment error:', error);
@@ -178,6 +144,8 @@ export class NftComponent implements OnInit,AfterViewInit {
     );
   }
 
-
-
+  // Função para abrir o drawer no NftHeaderComponent
+  openCartDrawer() {
+    this.nftHeader.openDrawer();
+  }
 }

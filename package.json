@@ -2,11 +2,11 @@
   "name": "angular-tailwind",
   "displayName": "NEXT PAYMENT",
   "version": "0.0.1",
-  "description": "Angular & Tailwind CSS Admin Dashboard Starter Kit, Free and Open Source",
-  "homepage": "https://github.com/lannodev/angular-tailwind#readme",
+  "description": "Angular & Tailwind CSS PDV",
+  "homepage": "https://github.com/fabiobrasileiroo/front-next-payment#",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lannodev/angular-tailwind.git"
+    "url": "git+https://github.com/fabiobrasileiroo/front-next-payment"
   },
   "keywords": [
     "angular",
