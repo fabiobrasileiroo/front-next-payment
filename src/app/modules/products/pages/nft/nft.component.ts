@@ -6,6 +6,7 @@ import { NftHeaderComponent } from '../../components/nft/nft-header/nft-header.c
 import { CommonModule, CurrencyPipe, DatePipe, NgFor, NgStyle } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ImageModule } from 'primeng/image';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nft',
@@ -37,7 +38,7 @@ export class NftComponent implements OnInit, AfterViewInit {
   isEnd = false;
   isLoading = true;  // Variável para controlar o estado de carregamento
 
-  constructor(private productService: ProductService, private paymentService: PaymentService) {}
+  constructor(private productService: ProductService, private paymentService: PaymentService, private router: Router) {}
 
   ngOnInit(): void {
     // Iniciar o carregamento dos produtos
@@ -108,13 +109,18 @@ getTotalAmount(): number {
       payer: { email: 'fabio.h591@gmail.com' },
     };
 
-    this.paymentService.createPayment(paymentData).subscribe(
-      (response) => {
+        this.paymentService.createPayment(paymentData).subscribe(
+      (response: any) => {
         const paymentUrl = response.point_of_interaction.transaction_data.ticket_url;
-        window.open(paymentUrl, '_blank');
+
+        console.log("🚀 ~ NftHeaderComponent ~ processPayment ~ paymentUrl:", paymentUrl)
+        // Navigate to the PaymentPixComponent with paymentUrl as state
+        this.router.navigate(['/products/payment-pix', {
+          paymentUrl,
+        }]);
       },
-      (error) => {
-        console.error('Payment error:', error);
+      (error: any) => {
+        console.error('Error creating payment:', error);
       }
     );
   }
@@ -134,15 +140,22 @@ getTotalAmount(): number {
       payer: { email: 'fabio@gmail.com' },
     };
   
-    this.paymentService.createPayment(paymentData).subscribe(
-      (response) => {
-        console.log('Payment successful');
+        this.paymentService.createPayment(paymentData).subscribe(
+      (response: any) => {
+        const paymentUrl = response.point_of_interaction.transaction_data.ticket_url;
+
+        console.log("🚀 ~ NftHeaderComponent ~ processPayment ~ paymentUrl:", paymentUrl)
+        // Navigate to the PaymentPixComponent with paymentUrl as state
+        this.router.navigate(['/products/payment-pix', {
+          paymentUrl,
+        }]);
       },
-      (error) => {
-        console.error('Payment error:', error);
+      (error: any) => {
+        console.error('Error creating payment:', error);
       }
     );
   }
+  
 
   // Função para abrir o drawer no NftHeaderComponent
   openCartDrawer() {

@@ -20,4 +20,13 @@ export class PaymentService {
 
     return this.http.post<any>(this.apiUrl, paymentData, { headers });
   }
+  // Novo método para verificar status de pagamento
+  checkPaymentStatus(paymentId: string): Observable<any> {
+    const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<any>(`${this.apiUrl}/check-payment-status/${paymentId}`, { headers });
+  }
 }

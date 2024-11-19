@@ -2,13 +2,15 @@ import { Component, Input } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { ImageModule } from 'primeng/image';
 import { PaymentService } from 'src/app/core/services/payment-pix.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-nft-header',
   templateUrl: './nft-header.component.html',
   standalone: true,
-  imports: [DrawerModule, ButtonModule, CurrencyPipe, NgIf, NgFor, ImageModule],
+  imports: [DrawerModule,OverlayBadgeModule, ButtonModule, CurrencyPipe, NgIf, NgFor, ImageModule],
 })
 export class NftHeaderComponent {
   visible: boolean = false;
@@ -16,7 +18,7 @@ export class NftHeaderComponent {
   updatedProducts: any[] = []; // Array para manter os dados atualizados
   totalAmount: number = 0; // Soma total dos produtos no carrinho
 
-  constructor(private paymentService: PaymentService) {}
+  constructor(private paymentService: PaymentService, private router: Router) { }
 
   openDrawer() {
     // Inicializa `quantityItem` para todos os produtos selecionados
@@ -74,34 +76,49 @@ export class NftHeaderComponent {
   }
 
   processPayment() {
-  if (this.selectedProducts.length === 0) {
-    alert('Por favor, selecione pelo menos um produto!');
-    return;
-  }
-
-  // Construir lista de produtos com ID e quantidade
-  const productsToPay = this.selectedProducts.map(product => ({
-    id: product.id,
-    quantity: product.selectedQuantity,
-  }));
-
-  const paymentData = {
-    transaction_amount: this.totalAmount, // Total calculado
-    description: 'Pagamento dos produtos selecionados',
-    payment_method_id: 'pix',
-    payer: { email: 'usuario@exemplo.com' },
-    // products: productsToPay, // Adicionando lista de produtos ao paymentData
-  };
-
-  this.paymentService.createPayment(paymentData).subscribe(
-    (response: any) => {
-      const paymentUrl = response.point_of_interaction.transaction_data.ticket_url;
-      window.open(paymentUrl, '_blank');
-    },
-    (error: any) => {
-      console.error('Erro no pagamento:', error);
+    if (this.selectedProducts.length === 0) {
+      alert('Por favor, selecione pelo menos um produto!');
+      return;
     }
-  );
-}
+
+    // Construir lista de produtos com ID e quantidade
+    const productsToPay = this.selectedProducts.map(product => ({
+      id: product.id,
+      quantity: product.selectedQuantity,
+    }));
+
+    const paymentData = {
+      transaction_amount: this.totalAmount, // Total calculado
+      description: 'Pagamento dos produtos selecionados',
+      payment_method_id: 'pix',
+      payer: { email: 'usuario@exemplo.com' },
+      // products: productsToPay, // Adicionando lista de produtos ao paymentData
+    };
+
+    // this.paymentService.createPayment(paymentData).subscribe(
+    //   (response: any) => {
+    //     const paymentUrl = response.point_of_interaction.transaction_data.ticket_url;
+    //     window.open(paymentUrl, '_blank');
+    //   },
+    //   (error: any) => {
+    //     console.error('Erro no pagamento:', error);
+    //   }
+    // );
+
+    this.paymentService.createPayment(paymentData).subscribe(
+      (response: any) => {
+        const paymentUrl = response.point_of_interaction.transaction_data.ticket_url;
+
+        console.log("🚀 ~ NftHeaderComponent ~ processPayment ~ paymentUrl:", paymentUrl)
+        // Navigate to the PaymentPixComponent with paymentUrl as state
+        this.router.navigate(['/products/payment-pix', {
+          paymentUrl,
+        }]);
+      },
+      (error: any) => {
+        console.error('Error creating payment:', error);
+      }
+    );
+  }
 
 }
