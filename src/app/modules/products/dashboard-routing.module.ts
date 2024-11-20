@@ -6,6 +6,7 @@ import { PodcastComponent } from './pages/podcast/podcast.component';
 import { AddProductComponent } from './pages/add-product/add-product.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PaymentPixComponent } from './pages/payment-pix/payment-pix.component';
+import { TransactionsComponent } from '../pages/transactions/transactions.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,7 @@ const routes: Routes = [
       { path: 'view', component: NftComponent },
       { path: 'payment-pix', component: PaymentPixComponent },
       { path: 'add', component: AddProductComponent },
-      { path: 'podcast', component: PodcastComponent },
+      { path: 'transactions', component: TransactionsComponent },
       { path: '**', redirectTo: 'errors/404' },
     ],
   },

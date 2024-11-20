@@ -16,6 +16,12 @@ export class AppComponent {
   title = 'NEXT PAYMENT';
 
   constructor(public themeService: ThemeService, private config: PrimeNGConfig) {
-    this.config.theme.set({preset: Aura,})
+    this.config.theme.set({preset: Aura,
+      options: {
+            prefix: 'p',
+            darkModeSelector: '.dark',
+            cssLayer: false
+        } 
+    })
   }
 }

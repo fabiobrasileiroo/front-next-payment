@@ -51,6 +51,7 @@
     "embla-carousel": "^8.3.1",
     "embla-carousel-angular": "^18.0.0",
     "ng-apexcharts": "^1.7.1",
+    "or": "^0.2.0",
     "primeicons": "^7.0.0",
     "primeng": "^18.0.0-beta.3",
     "rxjs": "~7.4.0",
