@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000',
+  acessToken: 'APP_USR-6984706992253472-091500-cf27d5db28531b72a349e582d0a5d434-288661995',
+  mercadoPagoApiUrl: 'https://api.mercadopago.com/v1/payments'
 };
 
 /*

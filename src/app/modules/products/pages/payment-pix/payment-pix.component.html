@@ -21,13 +21,9 @@
         </span>
       </h3>
       <p class="text-sm text-muted-foreground">{{ statusMessage }}</p>
-      <div *ngIf="!paymentUrl" class="mt-2 bg-red-100 text-red-600 p-2 rounded">
-        <p>Error: Payment URL not available.</p>
-      </div>
-      <p class="mt-4 text-md font-medium text-muted-foreground">Tempo restante para próxima tentativa:</p>
+      <p class="mt-4 text-md font-medium text-muted-foreground">Tempo total decorrido:</p>
       <p-progressBar [value]="progressBarValue"></p-progressBar>
-      <p class="text-sm text-muted-foreground mt-2">{{ timeLeft - elapsedTime }} segundos restantes</p>
-      <p class="mt-2 text-sm font-medium text-muted-foreground">Tentativa {{ attemptCount + 1 }} de {{ maxAttempts }}</p>
+      <p class="text-sm text-muted-foreground mt-2">{{ (maxTime - elapsedTime) / 60 | number:'1.0-0' }} minutos restantes</p>
     </div>
     <iframe *ngIf="paymentIframeUrl" [src]="paymentIframeUrl | safe" 
             class="w-full h-[1000px] rounded-b-md border border-muted" 

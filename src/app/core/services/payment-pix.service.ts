@@ -9,6 +9,8 @@ import { environment } from 'src/environments/environment';
 })
 export class PaymentService {
   private apiUrl = `${environment.apiUrl}/api/payments`;
+  private mercadoPagoApiUrl = `${environment.mercadoPagoApiUrl}`; // URL da API do Mercado Pago
+  private acessTokenMercadoPago = `${environment.acessToken}`
 
   constructor(private http: HttpClient) {}
 
@@ -20,13 +22,28 @@ export class PaymentService {
 
     return this.http.post<any>(this.apiUrl, paymentData, { headers });
   }
-  // Novo método para verificar status de pagamento
+  // Novo método para verificar status de pagamento antigo
+  // checkPaymentStatus(paymentId: string): Observable<any> {
+  //   const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+  //   const headers = new HttpHeaders({
+  //     Authorization: `Bearer ${token}`,
+  //   });
+
+  //   return this.http.get<any>(`${this.apiUrl}/check-payment-status/${paymentId}`, { headers });
+  // }
+
+   // Método para verificar o status do pagamento
   checkPaymentStatus(paymentId: string): Observable<any> {
-    const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+
+    if (!this.acessTokenMercadoPago) {
+      throw new Error('Token não encontrado. Faça login novamente.');
+    }
+
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${this.acessTokenMercadoPago}`,
     });
 
-    return this.http.get<any>(`${this.apiUrl}/check-payment-status/${paymentId}`, { headers });
+    // Faz a chamada à API do Mercado Pago
+    return this.http.get(`${this.mercadoPagoApiUrl}/${paymentId}`, { headers });
   }
 }

@@ -51,6 +51,7 @@ export class NftComponent implements OnInit, AfterViewInit {
 
     this.productService.getProducts().subscribe((data) => {
       this.products = data;
+      console.log("🚀 ~ NftComponent ~ this.productService.getProducts ~ products:", this.products)
       this.groupProductsByCategory(data);
       // Define como falso após os dados serem carregados
       setTimeout(() => {
