@@ -1,6 +1,6 @@
 <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
   <app-nft-header [selectedProducts]="selectedProducts"></app-nft-header>
-
+  
   <!-- Iteração por categoria de produtos -->
   <div *ngFor="let category of productsByCategory | keyvalue" class="mb-8">
     <h2 class="text-xl font-semibold  text-foreground mt-8 mb-4">{{ category.key }}</h2>
