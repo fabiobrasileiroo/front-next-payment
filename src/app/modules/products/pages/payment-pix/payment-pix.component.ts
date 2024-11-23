@@ -66,6 +66,7 @@ export class PaymentPixComponent implements OnInit, OnDestroy {
   startTimer(): void {
     this.timerInterval = interval(1000).subscribe(() => {
       this.elapsedTime++;
+      console.log(this.paymentStatus)
 
       if (this.elapsedTime % 1 === 0) {
         this.checkPaymentStatus(); // Verifica o status a cada 1 segundo

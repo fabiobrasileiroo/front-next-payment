@@ -21,8 +21,8 @@
         </span>
       </h3>
       <p class="text-sm text-muted-foreground">{{ statusMessage }}</p>
-      <p class="mt-4 text-md font-medium text-muted-foreground">Tempo total decorrido:</p>
       <p-progressBar [value]="progressBarValue"></p-progressBar>
+      <p class="mt-4 text-md font-medium text-muted-foreground">Tempo total decorrido:</p>
       <p class="text-sm text-muted-foreground mt-2">{{ (maxTime - elapsedTime) / 60 | number:'1.0-0' }} minutos restantes</p>
     </div>
     <iframe *ngIf="paymentIframeUrl" [src]="paymentIframeUrl | safe" 
