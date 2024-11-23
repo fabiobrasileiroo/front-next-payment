@@ -12,6 +12,12 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 if (environment.production) {
   enableProdMode();
+  // Redefinir os métodos de log do console em produção
+  window.console.log = () => {};
+  window.console.warn = () => {};
+  window.console.error = () => {};
+  window.console.info = () => {};
+  window.console.debug = () => {};
   //show this warning only on prod mode
   if (window) {
     selfXSSWarning();

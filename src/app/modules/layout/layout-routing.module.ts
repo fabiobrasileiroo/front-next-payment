@@ -10,6 +10,12 @@ const routes: Routes = [
     loadChildren: () => import('../products/dashboard.module').then((m) => m.DashboardModule),
     canActivate: [AuthGuard], // Aplicar o guard aqui
   },
+  {
+    path: 'collaboration',
+    component: LayoutComponent,
+    loadChildren: () => import('../collaboration/collaboration.module').then((m) => m.CollaborationModule),
+    canActivate: [AuthGuard], // Aplicar o guard aqui
+  },
   { path: '', redirectTo: 'products', pathMatch: 'full' },
   { path: '**', redirectTo: 'error/404' },
 ];

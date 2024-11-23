@@ -78,7 +78,7 @@ export class NftComponent implements OnInit, AfterViewInit {
 
   private groupProductsByCategory(products: any[]): void {
     this.productsByCategory = products.reduce((acc, product) => {
-      const category = product.category ? product.category.name : 'Sem Categoria';
+      const category = product.category ? product.category.name : product.category.name //'Sem Categoria';
       if (!acc[category]) acc[category] = [];
       acc[category].push(product);
       return acc;
