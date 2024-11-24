@@ -1,12 +1,126 @@
-<div>
-  <h1>Unidades</h1>
-  <button (click)="criarUnidade()">Criar Unidade</button>
+<div class="container mx-auto p-4 w-full">
+  <h1 class="font-semibold text-foreground text-2xl mb-4">Unidades</h1>
 
-  <ul>
-    <li *ngFor="let unidade of unidades">
-      {{ unidade.name }} (ID: {{ unidade.id }})
-      <button (click)="atualizarUnidade(unidade.id)">Atualizar</button>
-      <button (click)="deletarUnidade(unidade.id)">Deletar</button>
-    </li>
-  </ul>
+  <!-- Botão para abrir o diálogo de nova unidade -->
+  <button 
+    pButton 
+    type="button" 
+    label="Nova Unidade" 
+    icon="pi pi-plus" 
+    class="mb-4 !bg-primary !border-border"
+    (click)="abrirDialogo()">
+  </button>
+
+  <!-- Tabela de unidades -->
+  <p-table 
+    [value]="unidades" 
+    [paginator]="true" 
+    [rows]="5" 
+    [responsiveLayout]="'scroll'" 
+    class="shadow-md border border-transparent w-full"
+    [globalFilterFields]="['name', 'pixKey']">
+    <ng-template pTemplate="caption">
+      <div class="table-header">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            [(ngModel)]="globalFilter"
+            placeholder="Pesquisar unidades..."
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">Nome <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="pixKey">Chave Pix <p-sortIcon field="pixKey"></p-sortIcon></th>
+        <th>Ações</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-unidade>
+      <tr>
+        <td>{{ unidade.name }}</td>
+        <td>{{ unidade.pixKey || 'N/A' }}</td>
+        <td>
+          <button 
+            pButton 
+            icon="pi pi-pencil" 
+            [rounded]="true" 
+            [outlined]="true" 
+            class="mr-2" 
+            severity="success" 
+            (click)="abrirDialogo(unidade)">
+          </button>
+          <button 
+            pButton 
+            icon="pi pi-trash" 
+            severity="danger" 
+            [rounded]="true" 
+            [outlined]="true" 
+            (click)="deletarUnidade(unidade.id)">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Diálogo para criação/edição de unidade -->
+  <p-dialog 
+    [(visible)]="showDialog" 
+    [modal]="true" 
+    [style]="{ width: '400px' }" 
+    header="Unidade"
+    (onHide)="showDialog = false" 
+    styleClass="!p-fluid !bg-card !font-normal !text-foreground !border-border">
+    
+    <div class="p-fluid flex flex-col gap-2">
+      <!-- Campo Nome -->
+      <div class="field flex flex-col gap-1">
+        <label for="name">Nome</label>
+        <input 
+          id="name" 
+          type="text" 
+          placeholder="Digite o nome" 
+          class="!bg-background !border-border !focus:border-primary" 
+          [(ngModel)]="unidadeAtual.name" 
+          required />
+        <small *ngIf="!unidadeAtual.name && showDialog" class="p-error">O nome é obrigatório.</small>
+      </div>
+
+      <!-- Campo PixKey -->
+      <div class="field flex flex-col gap-1">
+        <label for="pixKey">Chave Pix</label>
+        <input 
+          id="pixKey" 
+          type="text" 
+          placeholder="Digite a chave Pix" 
+          class="!bg-background !border-border !focus:border-primary" 
+          [(ngModel)]="unidadeAtual.pixKey" />
+      </div>
+    </div>
+
+    <!-- Botões do diálogo -->
+    <p-footer>
+      <button 
+        pButton 
+        type="button" 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        class="!text-destructive !bg-card !border-none" 
+        (click)="showDialog = false">
+      </button>
+      <button 
+        pButton 
+        type="button" 
+        label="Salvar" 
+        icon="pi pi-check" 
+        class="!bg-primary !text-background !border-border" 
+        (click)="salvarUnidade()">
+      </button>
+    </p-footer>
+  </p-dialog>
 </div>

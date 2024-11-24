@@ -1,19 +1,28 @@
-import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
 import { UnidadeService } from 'src/app/core/services/unidade.service';
-
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-company-unit',
   standalone: true,
-  imports: [NgFor],
+  imports: [NgFor, NgIf, TableModule, ButtonModule, DialogModule, InputTextModule, FormsModule],
+  providers: [MessageService],
   templateUrl: './company-unit.component.html',
-  styleUrl: './company-unit.component.scss'
+  styleUrls: ['./company-unit.component.scss'],
 })
-export class CompanyUnitComponent {
-unidades: any[] = [];
+export class CompanyUnitComponent implements OnInit {
+  unidades: any[] = [];
+  showDialog: boolean = false;
+  globalFilter: string = '';
+  unidadeAtual: any = { name: '', pixKey: '' };
 
-  constructor(private unidadeService: UnidadeService) {}
+  constructor(private unidadeService: UnidadeService, private messageService: MessageService) {}
 
   ngOnInit(): void {
     this.carregarUnidades();
@@ -25,45 +34,95 @@ unidades: any[] = [];
         this.unidades = response.units;
       },
       (error) => {
-        console.error('Erro ao carregar unidades:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar unidades. Verifique sua conexão.',
+        });
       }
     );
   }
 
+  abrirDialogo(unidade?: any): void {
+    this.unidadeAtual = unidade ? { ...unidade } : { name: '', pixKey: '' };
+    this.showDialog = true;
+  }
+
+  salvarUnidade(): void {
+    if (!this.unidadeAtual.name) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'O nome é obrigatório!',
+      });
+      return;
+    }
+
+    if (this.unidadeAtual.id) {
+      this.atualizarUnidade(this.unidadeAtual.id);
+    } else {
+      this.criarUnidade();
+    }
+  }
+
   criarUnidade(): void {
-    const novaUnidade = { name: 'Unidade Nova' };
-    this.unidadeService.criarUnidade(novaUnidade).subscribe(
-      (response) => {
-        console.log('Unidade criada com sucesso:', response);
+    this.unidadeService.criarUnidade(this.unidadeAtual).subscribe(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Unidade criada com sucesso!',
+        });
         this.carregarUnidades();
+        this.showDialog = false;
       },
       (error) => {
-        console.error('Erro ao criar unidade:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao criar unidade.',
+        });
       }
     );
   }
 
   atualizarUnidade(id: number): void {
-    const unidadeAtualizada = { name: 'Unidade Atualizada', pixKey: 'novaPixKey' };
-    this.unidadeService.atualizarUnidade(id, unidadeAtualizada).subscribe(
-      (response) => {
-        console.log('Unidade atualizada com sucesso:', response);
+    this.unidadeService.atualizarUnidade(id, this.unidadeAtual).subscribe(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Unidade atualizada com sucesso!',
+        });
         this.carregarUnidades();
+        this.showDialog = false;
       },
       (error) => {
-        console.error('Erro ao atualizar unidade:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao atualizar unidade.',
+        });
       }
     );
   }
 
   deletarUnidade(id: number): void {
     this.unidadeService.deletarUnidade(id).subscribe(
-      (response) => {
-        console.log('Unidade deletada com sucesso:', response);
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Unidade deletada com sucesso!',
+        });
         this.carregarUnidades();
       },
       (error) => {
-        console.error('Erro ao deletar unidade:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao deletar unidade.',
+        });
       }
     );
   }
