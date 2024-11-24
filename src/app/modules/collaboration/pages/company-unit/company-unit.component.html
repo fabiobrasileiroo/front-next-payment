@@ -1,1 +1,12 @@
-<p>company-unit works!</p>
+<div>
+  <h1>Unidades</h1>
+  <button (click)="criarUnidade()">Criar Unidade</button>
+
+  <ul>
+    <li *ngFor="let unidade of unidades">
+      {{ unidade.name }} (ID: {{ unidade.id }})
+      <button (click)="atualizarUnidade(unidade.id)">Atualizar</button>
+      <button (click)="deletarUnidade(unidade.id)">Deletar</button>
+    </li>
+  </ul>
+</div>

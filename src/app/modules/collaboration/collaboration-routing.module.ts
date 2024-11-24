@@ -9,7 +9,7 @@ import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { TransactionsComponent } from '../pages/transactions/transactions.component';
 import { CollaborationComponent } from './collaboration.component';
 import { UsersComponent } from './pages/users/users.component';
-import { CompanyUnitComponent } from './company-unit/company-unit.component';
+import { CompanyUnitComponent } from './pages/company-unit/company-unit.component';
 
 const routes: Routes = [
   {
