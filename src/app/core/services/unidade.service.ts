@@ -44,7 +44,7 @@ export class UnidadeService {
    * Endpoint: POST /create-unit
    */
   criarUnidade(data: { name: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/create-unit`, data, {
+    return this.http.post<any>(`${this.apiUrl}/units`, data, {
       headers: this.getHeaders(),
     });
   }
