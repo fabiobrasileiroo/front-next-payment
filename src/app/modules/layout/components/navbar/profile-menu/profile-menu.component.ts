@@ -41,14 +41,14 @@ export class ProfileMenuComponent implements OnInit {
   public isOpen = false;
   public profileMenu = [
     {
-      title: 'Your Profile',
+      title: 'Seu perfil',
       icon: './assets/icons/heroicons/outline/user-circle.svg',
-      link: '/profile',
+      link: '/settings/profile',
     },
     {
       title: 'Settings',
       icon: './assets/icons/heroicons/outline/cog-6-tooth.svg',
-      link: '/settings',
+      link: '/settings/profile',
     },
     {
       title: 'Log out',

@@ -66,6 +66,7 @@ export class CompanyUnitComponent implements OnInit {
   }
 
   criarUnidade(): void {
+    console.log(this.unidadeAtual)
     this.unidadeService.criarUnidade(this.unidadeAtual).subscribe(
       () => {
         this.messageService.add({
