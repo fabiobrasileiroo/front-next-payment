@@ -1,6 +1,9 @@
+<img src="https://github.com/user-attachments/assets/2e67f5fb-b109-4bac-8169-8d11ad27dd1b" alt="Descrição da imagem" width="200px">
+
 # Front-End do Sistema PDV
 
-<img src="https://github.com/user-attachments/assets/2e67f5fb-b109-4bac-8169-8d11ad27dd1b" alt="Descrição da imagem" width="200px">
+https://github.com/user-attachments/assets/ebe18b29-3fa9-42c5-a7f1-eb554d1368bc
+
 
 ## Descrição
 Aplicação front-end para o sistema de Ponto de Venda (PDV), desenvolvida em Angular. A aplicação permite gerenciar produtos, usuários e realizar operações de venda, integrando-se ao backend para autenticação e processamento de pagamentos.
